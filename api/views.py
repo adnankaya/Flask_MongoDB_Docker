@@ -31,8 +31,10 @@ def create_book(payload):
     try:
         author = Author.objects.get(id=author_id)
     except Author.DoesNotExist as exc:
-        return abort(code=400,
+        return abort(code=404,
                      description="Author does not exist, check your author_id again")
+    except:
+        return abort(code=400)
     else:
         book = Book(**payload, author=author)
         book.save()
@@ -65,7 +67,7 @@ def update_author(payload, id):
         author.save()
         author.reload()
         return author
-    except Author.DoesNotExsit as ex:
+    except Author.DoesNotExist as ex:
         return abort(404, description=ex)
     except:
         return abort(400)
@@ -77,7 +79,7 @@ def delete_author(id):
         author = Author.objects.get(id=id)
         author.delete()
         return jsonify(message=f"Deleted {author}!")
-    except Author.DoesNotExsit as ex:
+    except Author.DoesNotExist as ex:
         return abort(404, description=ex)
     except:
         return abort(400)
